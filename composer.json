@@ -1,0 +1,42 @@
+{
+	"name": "tsoffereins/nano",
+	"description": "A nano sized framework with the bare minimum for simple applications.",
+	"type": "framework",
+	"keywords": [
+		"nano",
+		"framework"
+	],
+	"homepage": "https://github.com/tsoffereins/nano",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Thomas Offereins",
+			"email": "tsoffereins@gmail.com",
+			"role": "lead"
+		}
+	],
+	"prefer-stable": true,
+	"require": {
+		"php": "^7.1",
+		"ext-PDO": "*"
+	},
+	"require-dev": {
+		"phpspec/prophecy": "^1.8",
+		"phpunit/phpunit": "^7.3"
+	},
+	"config": {
+		"platform": {
+			"php": "7.1.0"
+		},
+		"optimize-autoloader": true,
+		"sort-packages": true
+	},
+	"autoload": {
+		"psr-4": {
+			"Nano\\": "src/"
+		},
+		"classmap": [
+			"tests/"
+		]
+	}
+}
