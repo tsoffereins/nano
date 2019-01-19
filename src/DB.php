@@ -19,6 +19,7 @@ class DB
 	 * @param  string $username
 	 * @param  string $password
 	 * @return void
+	 * @deprecated 1.1.0  Please bind PDO in the container directly instead.
 	 */
 	public function __construct(string $host, string $db, string $username = 'root', string $password = '')
 	{

@@ -12,7 +12,7 @@ The Nano framework contains the following classes:
 * `Nano\Container` - An IoC container for dependency injection
 * `Nano\PipeLine` - A middleware bus
 * `Nano\Router` - A router for defining endpoints
-* `Nano\DB` - A PDO database connection
+* `Nano\DB` - A PDO database connection (deprecated)
 
 ### Container
 Using the container:
@@ -97,16 +97,16 @@ $router->addRoutes(['/user/:id', 'Controller@user']);
 ```
 
 ### Database
-Setting up a DB connection:
+Previously you could use the `Nano/DB` class, but since it is going to be *deprecated* in the near future, I advice you to bind the default PDO class to the container instead:
 ```php
-$container->singleton('Nano/DB', function()
+$container->singleton('PDO', function()
 {
-    return new DB('host', 'database', 'user', 'password');
+    return new PDO('dsn', 'user', 'password');
 });
 
 class Controller
 {
-    public function __construct(DB $db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
     }
