@@ -54,7 +54,7 @@ class Router
      * Match a uri against the routes.
      *
      * @param  string $uri
-     * @param string $method
+     * @param  string $method
      * @return mixed
      * @throws \ReflectionException
      */
@@ -63,7 +63,7 @@ class Router
 		foreach ($this->routes as $pattern => $target) {
 			if (preg_match_all($pattern, "$method=$uri", $matches)) {
 				$matches = array_map(
-					function($match)
+					function(array $match): string
 					{
 						return $match[0];
 					},

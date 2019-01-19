@@ -22,7 +22,8 @@
 	},
 	"require-dev": {
 		"phpspec/prophecy": "^1.8",
-		"phpunit/phpunit": "^7.3"
+		"phpunit/phpunit": "^7.3",
+		"vimeo/psalm": "^3.0"
 	},
 	"config": {
 		"platform": {
@@ -38,5 +39,13 @@
 		"classmap": [
 			"tests/"
 		]
+	},
+	"scripts": {
+		"all": [
+			"composer run analyze",
+			"composer run test"
+		],
+		"analyze": "psalm",
+		"test": "phpunit"
 	}
 }
