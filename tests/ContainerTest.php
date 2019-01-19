@@ -68,7 +68,9 @@ class ContainerTest extends TestCase
 
 		$container->singleton('foo', function()
 		{
-			return rand(0, 10000);
+			return (object) [
+			    'value' => rand(0, 10000)
+            ];
 		});
 
 		// When
@@ -76,6 +78,6 @@ class ContainerTest extends TestCase
 		$result2 = $container->make('foo');
 
 		// Then
-		$this->assertEquals($result1, $result2);
+		$this->assertEquals($result1->value, $result2->value);
 	}
 }
