@@ -36,25 +36,32 @@ class Router
 	public function addRoutes(array $routes)
 	{
 		foreach ($routes as $route => $target) {
-			$route = str_replace('/', '\/', $route);
+            $pattern = str_replace('/', '\/', $route);
 
-			$pattern = preg_replace('/:[^\/]+/', '([^\/]+)', $route);
+			$pattern = preg_replace('/:[^\/]+/', '([^\/]+)', $pattern);
+
+			$pattern = str_replace('+)/', '+)\/', $pattern);
+
+			if (preg_match('/^(GET|POST|PUT|PATCH|DELETE)=/', $pattern) !== 1) {
+			    $pattern = 'GET=' . $pattern;
+            }
 
 			$this->routes["/^$pattern$/"] = $target;
 		}
 	}
 
-	/**
-	 * Match a uri against the routes.
-	 *
-	 * @param  string $uri
-	 * @return mixed
-	 * @throws \ReflectionException
-	 */
-	public function match(string $uri)
+    /**
+     * Match a uri against the routes.
+     *
+     * @param  string $uri
+     * @param string $method
+     * @return mixed
+     * @throws \ReflectionException
+     */
+	public function match(string $uri, string $method = 'GET')
 	{
 		foreach ($this->routes as $pattern => $target) {
-			if (preg_match_all($pattern, $uri, $matches)) {
+			if (preg_match_all($pattern, "$method=$uri", $matches)) {
 				$matches = array_map(
 					function($match)
 					{

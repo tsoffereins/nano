@@ -96,6 +96,17 @@ Route parameters:
 $router->addRoutes(['/user/:id', 'Controller@user']);
 ```
 
+Request methods:
+```php
+$router->addRoutes([
+    '/home', 'Controller@index', // defaults to GET
+    'POST=/user/',
+    'GET=/user/:id',
+    'PUT=/user/:id',
+    'DELETE=/user/:id'
+]);
+```
+
 ### Database
 Previously you could use the `Nano/DB` class, but since it is going to be *deprecated* in the near future, I advice you to bind the default PDO class to the container instead:
 ```php
