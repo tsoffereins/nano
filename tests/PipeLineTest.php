@@ -70,8 +70,7 @@ class PipeLineTest extends TestCase
 
 		// When
 		$result = $pipeLine->fire(
-			function($payload)
-			{
+			function($payload) {
 				return $payload * 3;
 			},
 			2

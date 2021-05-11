@@ -1,51 +1,42 @@
-<?php namespace Nano;
+<?php
+
+declare(strict_types=1);
+
+namespace Nano;
 
 use ReflectionClass;
+use ReflectionException;
+use ReflectionNamedType;
 
 class Container
 {
-	/**
-	 * A list of bound classes.
-	 *
-	 * @var array
-	 */
-	private $bindings = [];
+	private array $bindings = [];
+	private array $cache = [];
 
-	/**
-	 * A list of cached classes.
-	 *
-	 * @var array
-	 */
-	private $cache = [];
-
-	/**
-	 * Setup the container.
-	 *
-	 * @return void
-	 */
 	public function __construct()
 	{
 		$this->cache[self::class] = $this;
 	}
 
-	/**
-	 * Resolve a class.
-	 *
-	 * @param  string $class
-	 * @param  array  $payload
-	 * @return mixed
-	 * @throws \ReflectionException
-	 */
+    /**
+     * @param string $class
+     * @param array $payload
+     * @return mixed|object
+     * @throws ReflectionException
+     */
 	public function make(string $class, array $payload = [])
 	{
 		$resolved = $this->resolve($class);
 
 		if (is_object($resolved)) {
 			return $resolved;
-		}
-		else if (is_string($resolved)) {
+		} else if (is_string($resolved)) {
 			$class = $resolved;
 		}
+
+		if ( ! class_exists($class)) {
+		    throw new ReflectionException("Class $class does not exist");
+        }
 
 		$reflection = new ReflectionClass($class);
 
@@ -62,12 +53,13 @@ class Container
 		// a class and therefore a dependency. If so, get this dependency also through 
 		// the container. If not, fill it with the arguments given in the payload.
 		foreach ($constructor->getParameters() as $dependency) {
-			if ( ! is_null($type = $dependency->getClass())) {
-				$instance = $this->make($type->name);
+            $type = $dependency->getType();
+
+			if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
+				$instance = $this->make($type->getName());
 
 				$arguments[] = $instance ?: array_shift($payload);
-			}
-			else {
+			} else {
 				$arguments[] = array_shift($payload);
 			}
 		}
@@ -75,12 +67,10 @@ class Container
 		return $reflection->newInstanceArgs($arguments);
 	}
 
-	/**
-	 * Resolve a class.
-	 *
-	 * @param  string $class
-	 * @return mixed
-	 */
+    /**
+     * @param string $class
+     * @return false|mixed|string|null
+     */
 	private function resolve(string $class)
 	{
 		// Bindings can be cached (singletons). The class is instantiated once and
@@ -114,26 +104,21 @@ class Container
 		return null;
 	}
 
-	/**
-	 * Bind a class to a target.
-	 *
-	 * @param  string $class
-	 * @param  mixed  $target
-	 * @return void
-	 */
-	public function bind(string $class, $target)
+    /**
+     * @param string $class
+     * @param mixed $target
+     */
+	public function bind(string $class, $target): void
 	{
 		$this->bindings[$class] = [$target, false];
 	}
 
 	/**
-	 * Bind a class to a target.
-	 *
 	 * @param  string $class
 	 * @param  mixed  $target
 	 * @return void
 	 */
-	public function singleton(string $class, $target)
+	public function singleton(string $class, $target): void
 	{
 		$this->bindings[$class] = [$target, true];
 	}

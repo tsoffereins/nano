@@ -15,10 +15,10 @@ class ContainerTest extends TestCase
 		$container = new Container();
 
 		// When
-		$result = $container->make('DateTime');
+		$result = $container->make('stdClass');
 
 		// Then
-		$this->assertTrue($result instanceof DateTime);
+		$this->assertTrue($result instanceof stdClass);
 	}
 
 	/**
@@ -31,14 +31,14 @@ class ContainerTest extends TestCase
 
 		$container->bind('foo', function()
 		{
-			return new DateTime();
+			return new stdClass();
 		});
 
 		// When
 		$result = $container->make('foo');
 
 		// Then
-		$this->assertTrue($result instanceof DateTime);
+		$this->assertTrue($result instanceof stdClass);
 	}
 
 	/**
@@ -49,13 +49,13 @@ class ContainerTest extends TestCase
 		// Given
 		$container = new Container();
 
-		$container->bind('foo', 'DateTime');
+		$container->bind('foo', 'stdClass');
 
 		// When
 		$result = $container->make('foo');
 
 		// Then
-		$this->assertTrue($result instanceof DateTime);
+		$this->assertTrue($result instanceof stdClass);
 	}
 
 	/**
@@ -66,8 +66,7 @@ class ContainerTest extends TestCase
 		// Given
 		$container = new Container();
 
-		$container->singleton('foo', function()
-		{
+		$container->singleton('foo', function () {
 			return (object) [
 			    'value' => rand(0, 10000)
             ];

@@ -1,57 +1,32 @@
-<?php namespace Nano;
+<?php
+
+declare(strict_types=1);
+
+namespace Nano;
+
+use ReflectionException;
 
 class PipeLine
 {
-	/**
-	 * The IoC container.
-	 *
-	 * @var Container
-	 */
-	private $ioc;
+	private Container $ioc;
+	private array $middleware = [];
+	private array $stack = [];
 
-	/**
-	 * The stack of middleware.
-	 *
-	 * @var array
-	 */
-	private $middleware = [];
-
-	/**
-	 * The current running stack of middleware.
-	 *
-	 * @var array
-	 */
-	private $stack = [];
-
-	/**
-	 * Create a new pipeline.
-	 *
-	 * @param  Container $ioc
-	 * @return void
-	 */
 	public function __construct(Container $ioc)
 	{
 		$this->ioc = $ioc;
 	}
 
-	/**
-	 * Add middleware to the pipeline.
-	 *
-	 * @param  array $middleware
-	 * @return void
-	 */
-	public function addMiddleware(array $middleware)
+	public function addMiddleware(array $middleware): void
 	{
 		$this->middleware = array_merge($this->middleware, $middleware);
 	}
 
 	/**
-	 * Fire an action through the pipeline
-	 *
 	 * @param  mixed $action
 	 * @param  mixed $payload
 	 * @return mixed
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function fire($action, $payload)
 	{
@@ -63,15 +38,17 @@ class PipeLine
 	}
 
 	/**
-	 * Call the next middleware.
-	 *
 	 * @param  mixed $payload
 	 * @return mixed
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function next($payload)
 	{
 		$callback = array_shift($this->stack);
+
+		if ($callback === null) {
+		    return null;
+        }
 
 		// If a the middleware callback is a string we expect i to be a classname, to
 		// make it callable we will instantiate it through the app container with
